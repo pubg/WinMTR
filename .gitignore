@@ -11,3 +11,9 @@
 *.lai
 *.la
 *.a
+
+# VS files
+.vs/
+*.user
+src/Release*/
+src/Debug*/
