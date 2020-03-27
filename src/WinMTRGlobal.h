@@ -17,6 +17,10 @@
 #define  _USE_32BIT_TIME_T
 #endif
 
+// Target platform is Windows XP
+#define WINVER 0x0501
+#define _WIN32_WINNT 0x0501
+
 #define VC_EXTRALEAN
 
 #include <afxwin.h>
