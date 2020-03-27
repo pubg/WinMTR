@@ -17,3 +17,4 @@
 *.user
 src/Release*/
 src/Debug*/
+*.suo
