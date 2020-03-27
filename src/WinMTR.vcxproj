@@ -177,7 +177,7 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <WarningLevel>Level3</WarningLevel>
       <MinimalRebuild>true</MinimalRebuild>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AssemblerListingLocation>.\Debug\</AssemblerListingLocation>
       <PrecompiledHeaderOutputFile>.\Debug\WinMTR.pch</PrecompiledHeaderOutputFile>
@@ -270,7 +270,6 @@
     <ClInclude Include="WinMTRLicense.h" />
     <ClInclude Include="WinMTRStatusBar.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="WinMTRDialog.h" />
     <ClInclude Include="WinMTRGlobal.h" />
     <ClInclude Include="WinMTRHelp.h" />
