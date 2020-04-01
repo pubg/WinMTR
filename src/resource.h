@@ -24,6 +24,7 @@
 #define ID_EXPT                         1006
 #define ID_EXPH                         1007
 #define ID_LICENSE                      1008
+#define ID_SEND_REPORT                  1009
 #define IDC_EDIT_LICENSE                1011
 #define IDC_EDIT_PHOST                  1012
 #define IDC_EDIT_PIP                    1013
