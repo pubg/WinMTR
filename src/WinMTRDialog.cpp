@@ -125,9 +125,9 @@ BOOL WinMTRDialog::OnInitDialog()
 	}
 	
 #ifndef  _WIN64
-	char caption[] = {"WinMTR (Redux) v1.00 32bit"};
+	char caption[] = {"WinMTR (PUBG) v1.00 32bit"};
 #else
-	char caption[] = {"WinMTR (Redux) v1.00 64bit"};
+	char caption[] = {"WinMTR (PUBG) v1.00 64bit"};
 #endif
 	
 	SetTimer(1, WINMTR_DIALOG_TIMER, NULL);

@@ -107,7 +107,7 @@ BEGIN
     CONTROL         "Resolve names",IDC_CHECK_DNS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,167,119,63,8
     GROUPBOX        "",IDC_STATIC,7,7,237,82,BS_FLAT
     CTEXT           "Get Fully Managed Dedicated and Cloud hosting in Europe and USA at killer prices.",IDC_STATIC,31,35,201,17
-    CTEXT           "WinMTR (Redux) v1.00 is offered under GPLv2",IDC_STATIC,42,14,194,17
+    CTEXT           "WinMTR (PUBG) v1.00 is offered under GPLv2",IDC_STATIC,42,14,194,17
     PUSHBUTTON      "&License and Credits",ID_LICENSE,81,67,94,14,BS_FLAT
     LTEXT           "Max. hosts in LRU list:",IDC_STATIC,15,119,74,10,NOT WS_GROUP
     EDITTEXT        IDC_EDIT_MAX_LRU,90,116,34,13,ES_AUTOHSCROLL
@@ -122,8 +122,8 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,62,36,50,14
     LTEXT           "Read more on",IDC_STATIC,36,21,46,8
     LTEXT           "www.winmtr.net",IDC_STATIC,85,21,60,8
-    CTEXT           "WinMTR (Redux) is licensed under GPLv2.",IDC_STATIC,2,9,171,8,SS_CENTER
-    CTEXT           "https://github.com/White-Tiger/WinMTR",IDC_STATIC,7,57,161,8,SS_CENTER
+    CTEXT           "WinMTR (PUBG) is licensed under GPLv2.",IDC_STATIC,2,9,171,8,SS_CENTER
+    CTEXT           "https://github.com/pubg/WinMTR",IDC_STATIC,7,57,161,8,SS_CENTER
 END
 
 IDD_DIALOG_PROPERTIES DIALOG 0, 0, 282, 160
@@ -163,7 +163,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,144,101,50,14
     LTEXT           "www.appnor.com",IDC_STATIC,187,9,60,11
-    LTEXT           "WinMTR (Redux) v1.00 is offered under GPLv2",IDC_STATIC,7,9,176,10
+    LTEXT           "WinMTR (PUBG) v1.00 is offered under GPLv2",IDC_STATIC,7,9,176,10
     LTEXT           "Usage: WinMTR [options] target_host_name",IDC_STATIC,7,29,144,8
     LTEXT           "Options:",IDC_STATIC,7,39,28,8
     LTEXT           "     --interval, -i VALUE. Set ping interval.",IDC_STATIC,26,47,131,8
@@ -196,7 +196,7 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "FileDescription", "WinMTR Redux (original by Appnor MSP - www.winmtr.net)"
+            VALUE "FileDescription", "WinMTR PUBG (original by Appnor MSP - www.winmtr.net)"
             VALUE "FileVersion", "1.0.0.0"
             VALUE "InternalName", "WinMTR"
             VALUE "LegalCopyright", "WinMTR 0.9 (c) 2010-2011 Appnor MSP - Fully Managed Hosting & Cloud Provider www.appnor.com"
