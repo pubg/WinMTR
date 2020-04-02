@@ -12,6 +12,8 @@
 #include <iostream>
 #include <sstream>
 
+//#define USE_PARAM_FROM_REGISTRY
+
 #ifdef _DEBUG
 #	define TRACE_MSG(msg)									\
 	{														\
@@ -195,7 +197,9 @@ BOOL WinMTRDialog::OnInitDialog()
 	// And position the control bars
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0);
 	
+#ifdef USE_PARAM_FROM_REGISTRY
 	InitRegistry();
+#endif
 	
 	if(m_autostart) {
 		m_comboHost.SetWindowText(msz_defaulthostname);
@@ -212,6 +216,7 @@ BOOL WinMTRDialog::OnInitDialog()
 //*****************************************************************************
 BOOL WinMTRDialog::InitRegistry()
 {
+#ifdef USE_PARAM_FROM_REGISTRY
 	HKEY hKey, hKey_v;
 	DWORD tmp_dword, value_size;
 	LONG r;
@@ -286,6 +291,7 @@ BOOL WinMTRDialog::InitRegistry()
 	m_comboHost.AddString(CString((LPCSTR)IDS_STRING_CLEAR_HISTORY));
 	RegCloseKey(hKey_v);
 	RegCloseKey(hKey);
+#endif
 	return TRUE;
 }
 
@@ -510,6 +516,7 @@ void WinMTRDialog::OnRestart()
 		}
 		m_listMTR.DeleteAllItems();
 		
+#ifdef USE_PARAM_FROM_REGISTRY
 		HKEY hKey; DWORD tmp_dword;
 		if(RegCreateKeyEx(HKEY_CURRENT_USER,"Software\\WinMTR\\Config",0,NULL,0,KEY_ALL_ACCESS,NULL,&hKey,NULL)==ERROR_SUCCESS) {
 			tmp_dword=m_checkIPv6.GetCheck();
@@ -517,9 +524,12 @@ void WinMTRDialog::OnRestart()
 			RegSetValueEx(hKey,"UseIPv6",0,REG_DWORD,(const unsigned char*)&tmp_dword,sizeof(DWORD));
 			RegCloseKey(hKey);
 		}
+#endif
 		if(InitMTRNet()) {
 			if(m_comboHost.FindString(-1, sHost) == CB_ERR) {
 				m_comboHost.InsertString(m_comboHost.GetCount() - 1,sHost);
+
+#ifdef USE_PARAM_FROM_REGISTRY
 				if(RegCreateKeyEx(HKEY_CURRENT_USER,"Software\\WinMTR\\LRU",0,NULL,0,KEY_ALL_ACCESS,NULL,&hKey,NULL)==ERROR_SUCCESS) {
 					char key_name[20];
 					if(++nrLRU>maxLRU) nrLRU=0;
@@ -529,6 +539,7 @@ void WinMTRDialog::OnRestart()
 					RegSetValueEx(hKey,"NrLRU", 0, REG_DWORD, (const unsigned char*)&tmp_dword, sizeof(DWORD));
 					RegCloseKey(hKey);
 				}
+#endif
 			}
 			Transit(TRACING);
 		}
@@ -553,6 +564,7 @@ void WinMTRDialog::OnOptions()
 		maxLRU = optDlg.GetMaxLRU();
 		useDNS = optDlg.GetUseDNS();
 		
+#ifdef USE_PARAM_FROM_REGISTRY
 		HKEY hKey;
 		DWORD tmp_dword;
 		
@@ -580,6 +592,7 @@ void WinMTRDialog::OnOptions()
 				RegCloseKey(hKey);
 			}
 		}
+#endif
 	}
 }
 
@@ -951,6 +964,7 @@ void WinMTRDialog::OnCbnSelchangeComboHost()
 
 void WinMTRDialog::ClearHistory()
 {
+#ifdef USE_PARAM_FROM_REGISTRY
 	HKEY hKey;
 	DWORD tmp_dword;
 	char key_name[20];
@@ -967,7 +981,8 @@ void WinMTRDialog::ClearHistory()
 	tmp_dword = nrLRU;
 	RegSetValueEx(hKey,"NrLRU", 0, REG_DWORD, (const unsigned char*)&tmp_dword, sizeof(DWORD));
 	RegCloseKey(hKey);
-	
+#endif
+
 	m_comboHost.Clear();
 	m_comboHost.ResetContent();
 	m_comboHost.AddString(CString((LPCSTR)IDS_STRING_CLEAR_HISTORY));
