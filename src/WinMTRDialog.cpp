@@ -80,6 +80,8 @@ WinMTRDialog::WinMTRDialog(CWnd* pParent)
 	hasMaxLRUFromCmdLine = false;
 	hasUseDNSFromCmdLine = false;
 	hasUseIPv6FromCmdLine = false;
+	hasReportHostFromCmdLine = false;
+	hasReportDurationSecFromCmdLine = false;
 	
 	traceThreadMutex = CreateMutex(NULL, FALSE, NULL);
 	wmtrnet = new WinMTRNet(this);
@@ -200,6 +202,7 @@ BOOL WinMTRDialog::OnInitDialog()
 #ifdef USE_PARAM_FROM_REGISTRY
 	InitRegistry();
 #endif
+	InitFromIni();
 	
 	if(m_autostart) {
 		m_comboHost.SetWindowText(msz_defaulthostname);
@@ -295,6 +298,83 @@ BOOL WinMTRDialog::InitRegistry()
 	return TRUE;
 }
 
+bool WinMTRDialog::InitFromIni()
+{
+	CString iniFullPath = GetIniPath();
+
+	const char * const SECTION_NAME = "WinMTR";
+	char tempBuffer[2048];
+	int tempValue = 0;
+
+	if (!hasIntervalFromCmdLine)
+	{
+		if (GetPrivateProfileStringA(SECTION_NAME, "interval", "", tempBuffer, 2048, iniFullPath) > 0)
+		{
+			double newInterval = atof(tempBuffer);
+			if (newInterval >= 0.1)  // prone too short interval
+			{
+				interval = newInterval;
+			}
+		}
+	}
+
+	if (!hasPingsizeFromCmdLine)
+	{
+		int newSize = GetPrivateProfileIntA(SECTION_NAME, "ping_size", DEFAULT_PING_SIZE, iniFullPath);
+		if (newSize > 0)
+		{
+			pingsize = newSize;
+		}
+	}
+
+	if (!hasUseDNSFromCmdLine)
+	{
+		int newBool = GetPrivateProfileIntA(SECTION_NAME, "numeric", 0, iniFullPath);
+		useDNS = (newBool == 0);
+	}
+
+	if (!hasUseIPv6FromCmdLine)
+	{
+		int newValue = GetPrivateProfileIntA(SECTION_NAME, "ipv6", 0, iniFullPath);
+		if (newValue == 0 || newValue == 1 || newValue == 2)
+		{
+			useIPv6 = newValue;
+		}
+	}
+
+	if (!hasReportHostFromCmdLine)
+	{
+		if (GetPrivateProfileStringA(SECTION_NAME, "report", "", tempBuffer, 2048, iniFullPath) > 0)
+		{
+			reportHost = tempBuffer;
+			reportHost.Trim();
+		}
+	}
+
+	if (!hasReportDurationSecFromCmdLine)
+	{
+		int newValue = GetPrivateProfileIntA(SECTION_NAME, "auto_report", 0, iniFullPath);
+		if (newValue > 0)
+		{
+			autoReportDurationSec = newValue;
+		}
+	}
+
+	return true;
+}
+
+CString WinMTRDialog::GetIniPath()
+{
+	char tempBuffer[2048];
+
+	::GetModuleFileNameA(NULL, tempBuffer, 2048);
+	tempBuffer[2047] = 0;		// safe null-termination (for XP)
+
+	PathRemoveExtensionA(tempBuffer);
+	strcat(tempBuffer, ".ini");
+
+	return CString(tempBuffer);
+}
 
 //*****************************************************************************
 // WinMTRDialog::OnSizing

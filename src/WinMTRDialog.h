@@ -88,10 +88,16 @@ public:
 	int					nrLRU;
 	BOOL				useDNS;
 	bool				hasUseDNSFromCmdLine;
+	// 0 means ipv4
+	// 1 means ipv6
+	// 2 means auto (maybe?)
 	unsigned char		useIPv6;
 	bool				hasUseIPv6FromCmdLine;
 	CString				reportHost;
+	bool				hasReportHostFromCmdLine;
+	// 0 means diabled.
 	int					autoReportDurationSec;
+	bool				hasReportDurationSecFromCmdLine;
 	WinMTRNet*			wmtrnet;
 	
 	void SetHostName(const char* host);
@@ -130,6 +136,9 @@ public:
 	afx_msg void OnCbnSelendokComboHost();
 private:
 	void ClearHistory();
+	bool InitFromIni();
+	CString GetIniPath();
+
 public:
 	afx_msg void OnCbnCloseupComboHost();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
