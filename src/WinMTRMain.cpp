@@ -130,13 +130,13 @@ void WinMTRMain::ParseCommandLineParams(LPTSTR cmd, WinMTRDialog* wmtrdlg)
 		wmtrdlg->hasUseIPv6FromCmdLine=true;
 		wmtrdlg->useIPv6=0;
 	}
-	if (GetParamValue(cmd, "report", 'r', value)) {
-		wmtrdlg->hasReportHostFromCmdLine = true;
-		wmtrdlg->reportHost = value;
+	if (GetParamValue(cmd, "report_url", 'r', value)) {
+		wmtrdlg->hasReportUrlFromCmdLine = true;
+		wmtrdlg->reportUrl = value;
 	}
 	if (GetParamValue(cmd, "auto_report", 'a', value)) {
-		wmtrdlg->hasReportDurationSecFromCmdLine = true;
-		wmtrdlg->autoReportDurationSec = atoi(value);
+		wmtrdlg->hasAutoReportSecFromCmdLine = true;
+		wmtrdlg->autoReportSec = atoi(value);
 	}
 }
 

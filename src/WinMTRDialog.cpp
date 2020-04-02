@@ -73,15 +73,15 @@ WinMTRDialog::WinMTRDialog(CWnd* pParent)
 	pingsize = DEFAULT_PING_SIZE;
 	maxLRU = DEFAULT_MAX_LRU;
 	nrLRU = 0;
-	autoReportDurationSec = 0;
+	autoReportSec = 0;
 	
 	hasIntervalFromCmdLine = false;
 	hasPingsizeFromCmdLine = false;
 	hasMaxLRUFromCmdLine = false;
 	hasUseDNSFromCmdLine = false;
 	hasUseIPv6FromCmdLine = false;
-	hasReportHostFromCmdLine = false;
-	hasReportDurationSecFromCmdLine = false;
+	hasReportUrlFromCmdLine = false;
+	hasAutoReportSecFromCmdLine = false;
 	
 	traceThreadMutex = CreateMutex(NULL, FALSE, NULL);
 	wmtrnet = new WinMTRNet(this);
@@ -342,21 +342,21 @@ bool WinMTRDialog::InitFromIni()
 		}
 	}
 
-	if (!hasReportHostFromCmdLine)
+	if (!hasReportUrlFromCmdLine)
 	{
-		if (GetPrivateProfileStringA(SECTION_NAME, "report", "", tempBuffer, 2048, iniFullPath) > 0)
+		if (GetPrivateProfileStringA(SECTION_NAME, "report_url", "", tempBuffer, 2048, iniFullPath) > 0)
 		{
-			reportHost = tempBuffer;
-			reportHost.Trim();
+			reportUrl = tempBuffer;
+			reportUrl.Trim();
 		}
 	}
 
-	if (!hasReportDurationSecFromCmdLine)
+	if (!hasAutoReportSecFromCmdLine)
 	{
 		int newValue = GetPrivateProfileIntA(SECTION_NAME, "auto_report", 0, iniFullPath);
 		if (newValue > 0)
 		{
-			autoReportDurationSec = newValue;
+			autoReportSec = newValue;
 		}
 	}
 

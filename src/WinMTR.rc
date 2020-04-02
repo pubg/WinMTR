@@ -172,7 +172,7 @@ BEGIN
     LTEXT           "     --maxLRU, -m VALUE. Set max hosts in LRU list.",IDC_STATIC,26,67,163,8
     LTEXT           "     --help, -h. Print this help.",IDC_STATIC,26,89,92,8
     LTEXT           "     --numeric, -n. Do not resolve names.",IDC_STATIC,26,78,129,8
-	LTEXT           "     --report, -r VALUE. Set report http server.", IDC_STATIC, 26, 100, 129, 8
+	LTEXT           "     --report_url, -r VALUE. Set report URL. Report will be posted here.", IDC_STATIC, 26, 100, 129, 8
 	LTEXT           "     --auto_report, -a VALUE. Send report after VALUE seconds and quit.", IDC_STATIC, 26, 111, 230, 8
 END
 

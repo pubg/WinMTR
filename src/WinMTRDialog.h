@@ -93,11 +93,11 @@ public:
 	// 2 means auto (maybe?)
 	unsigned char		useIPv6;
 	bool				hasUseIPv6FromCmdLine;
-	CString				reportHost;
-	bool				hasReportHostFromCmdLine;
+	CString				reportUrl;
+	bool				hasReportUrlFromCmdLine;
 	// 0 means diabled.
-	int					autoReportDurationSec;
-	bool				hasReportDurationSecFromCmdLine;
+	int					autoReportSec;
+	bool				hasAutoReportSecFromCmdLine;
 	WinMTRNet*			wmtrnet;
 	
 	void SetHostName(const char* host);
