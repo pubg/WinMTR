@@ -67,6 +67,7 @@ public:
 	CStatic	m_staticS;
 	CStatic	m_staticJ;
 	
+	CButton	m_buttonSendReport;
 	CButton	m_buttonExpT;
 	CButton	m_buttonExpH;
 	
@@ -89,6 +90,8 @@ public:
 	bool				hasUseDNSFromCmdLine;
 	unsigned char		useIPv6;
 	bool				hasUseIPv6FromCmdLine;
+	CString				reportHost;
+	int					autoReportDurationSec;
 	WinMTRNet*			wmtrnet;
 	
 	void SetHostName(const char* host);

@@ -71,6 +71,7 @@ WinMTRDialog::WinMTRDialog(CWnd* pParent)
 	pingsize = DEFAULT_PING_SIZE;
 	maxLRU = DEFAULT_MAX_LRU;
 	nrLRU = 0;
+	autoReportDurationSec = 0;
 	
 	hasIntervalFromCmdLine = false;
 	hasPingsizeFromCmdLine = false;
@@ -106,6 +107,7 @@ void WinMTRDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LIST_MTR, m_listMTR);
 	DDX_Control(pDX, IDC_STATICS, m_staticS);
 	DDX_Control(pDX, IDC_STATICJ, m_staticJ);
+	DDX_Control(pDX, ID_SEND_REPORT, m_buttonSendReport);
 	DDX_Control(pDX, ID_EXPH, m_buttonExpH);
 	DDX_Control(pDX, ID_EXPT, m_buttonExpT);
 }
