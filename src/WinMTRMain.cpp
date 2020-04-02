@@ -110,7 +110,7 @@ void WinMTRMain::ParseCommandLineParams(LPTSTR cmd, WinMTRDialog* wmtrdlg)
 		wmtrdlg->SetInterval((float)atof(value));
 		wmtrdlg->hasIntervalFromCmdLine = true;
 	}
-	if(GetParamValue(cmd, "size",'s', value)) {
+	if(GetParamValue(cmd, "ping_size",'s', value)) {
 		wmtrdlg->SetPingSize((WORD)atoi(value));
 		wmtrdlg->hasPingsizeFromCmdLine = true;
 	}

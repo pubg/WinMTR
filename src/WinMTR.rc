@@ -167,8 +167,8 @@ BEGIN
     LTEXT           "WinMTR (PUBG) v1.00 is offered under GPLv2",IDC_STATIC,7,9,176,10
     LTEXT           "Usage: WinMTR [options] target_host_name",IDC_STATIC,7,29,144,8
     LTEXT           "Options:",IDC_STATIC,7,39,28,8
-    LTEXT           "     --interval, -i VALUE. Set ping interval.",IDC_STATIC,26,47,131,8
-    LTEXT           "     --size, -s VALUE. Set ping size.",IDC_STATIC,26,57,109,8
+    LTEXT           "     --interval, -i VALUE. Set ping interval (seconds).",IDC_STATIC,26,47,131,8
+    LTEXT           "     --ping_size, -s VALUE. Set ping size.",IDC_STATIC,26,57,109,8
     LTEXT           "     --maxLRU, -m VALUE. Set max hosts in LRU list.",IDC_STATIC,26,67,163,8
     LTEXT           "     --help, -h. Print this help.",IDC_STATIC,26,89,92,8
     LTEXT           "     --numeric, -n. Do not resolve names.",IDC_STATIC,26,78,129,8
