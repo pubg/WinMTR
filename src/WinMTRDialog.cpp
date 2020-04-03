@@ -924,6 +924,13 @@ void WinMTRDialog::OnEXPH()
 void WinMTRDialog::OnSendReport()
 {
 	MessageBox("Send report", "TBD");
+
+	if (m_isAutoReportEnabled)
+	{
+		m_isAutoReportEnabled = false;
+
+		EndDialog(IDOK);
+	}
 }
 
 //*****************************************************************************
