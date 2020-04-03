@@ -95,7 +95,8 @@ public:
 	bool				hasUseIPv6FromCmdLine;
 	CString				reportUrl;
 	bool				hasReportUrlFromCmdLine;
-	// 0 means diabled.
+	// 0 means disabled.
+	// only used when m_autostart and reportUrl is valid
 	int					autoReportSec;
 	bool				hasAutoReportSecFromCmdLine;
 	WinMTRNet*			wmtrnet;
@@ -110,6 +111,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);
 	
 	int m_autostart;
+	bool m_isAutoReportEnabled;
 	char msz_defaulthostname[1000];
 	
 	HICON m_hIcon;
@@ -127,7 +129,8 @@ protected:
 	afx_msg void OnCHTC();
 	afx_msg void OnEXPT();
 	afx_msg void OnEXPH();
-	
+	afx_msg void OnSendReport();
+
 	afx_msg void OnDblclkList(NMHDR* pNMHDR, LRESULT* pResult);
 	
 	DECLARE_MESSAGE_MAP()

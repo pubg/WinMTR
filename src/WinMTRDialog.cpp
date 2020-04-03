@@ -12,6 +12,10 @@
 #include <iostream>
 #include <sstream>
 
+
+const UINT TIMERID_DIALOG = 1;
+const UINT TIMERID_AUTO_REPORT = 2;
+
 //#define USE_PARAM_FROM_REGISTRY
 
 #ifdef _DEBUG
@@ -46,6 +50,7 @@ BEGIN_MESSAGE_MAP(WinMTRDialog, CDialog)
 	ON_BN_CLICKED(ID_CHTC, OnCHTC)
 	ON_BN_CLICKED(ID_EXPT, OnEXPT)
 	ON_BN_CLICKED(ID_EXPH, OnEXPH)
+	ON_BN_CLICKED(ID_SEND_REPORT, OnSendReport)
 	ON_NOTIFY(NM_DBLCLK, IDC_LIST_MTR, OnDblclkList)
 	ON_CBN_SELCHANGE(IDC_COMBO_HOST, &WinMTRDialog::OnCbnSelchangeComboHost)
 	ON_CBN_SELENDOK(IDC_COMBO_HOST, &WinMTRDialog::OnCbnSelendokComboHost)
@@ -68,6 +73,7 @@ WinMTRDialog::WinMTRDialog(CWnd* pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	m_autostart = 0;
+	m_isAutoReportEnabled = false;
 	useDNS = DEFAULT_DNS;
 	interval = DEFAULT_INTERVAL;
 	pingsize = DEFAULT_PING_SIZE;
@@ -136,7 +142,7 @@ BOOL WinMTRDialog::OnInitDialog()
 	char caption[] = {"WinMTR (PUBG) v1.00 64bit"};
 #endif
 	
-	SetTimer(1, WINMTR_DIALOG_TIMER, NULL);
+	SetTimer(TIMERID_DIALOG, WINMTR_DIALOG_TIMER, NULL);
 	SetWindowText(caption);
 	
 	SetIcon(m_hIcon, TRUE);
@@ -204,9 +210,17 @@ BOOL WinMTRDialog::OnInitDialog()
 #endif
 	InitFromIni();
 	
+	m_buttonSendReport.EnableWindow(!reportUrl.IsEmpty());
+
 	if(m_autostart) {
 		m_comboHost.SetWindowText(msz_defaulthostname);
 		OnRestart();
+
+		if (!reportUrl.IsEmpty() && autoReportSec > 0)
+		{
+			m_isAutoReportEnabled = true;
+			SetTimer(TIMERID_AUTO_REPORT, 1000 * autoReportSec, NULL);
+		}
 	}
 	
 	return FALSE;
@@ -624,6 +638,12 @@ void WinMTRDialog::OnRestart()
 			Transit(TRACING);
 		}
 	} else {
+		if (autoReportSec > 0)
+		{
+			// disable auto report when press Stop manually.
+			m_isAutoReportEnabled = false;
+			KillTimer(TIMERID_AUTO_REPORT);
+		}
 		Transit(STOPPING);
 	}
 }
@@ -899,6 +919,11 @@ void WinMTRDialog::OnEXPH()
 }
 
 
+void WinMTRDialog::OnSendReport()
+{
+	MessageBox("Send report", "TBD");
+}
+
 //*****************************************************************************
 // WinMTRDialog::WinMTRDialog
 //
@@ -1156,6 +1181,7 @@ void WinMTRDialog::Transit(STATES new_state)
 	case IDLE_TO_TRACING:
 		m_buttonStart.EnableWindow(FALSE);
 		m_buttonStart.SetWindowText("Stop");
+		m_buttonSendReport.EnableWindow(FALSE);
 		m_comboHost.EnableWindow(FALSE);
 		m_checkIPv6.EnableWindow(FALSE);
 		m_buttonOptions.EnableWindow(FALSE);
@@ -1173,10 +1199,15 @@ void WinMTRDialog::Transit(STATES new_state)
 		m_buttonStart.EnableWindow(TRUE);
 		statusBar.SetPaneText(0, CString((LPCSTR)IDS_STRING_SB_NAME));
 		m_buttonStart.SetWindowText("Start");
+		m_buttonSendReport.EnableWindow(!reportUrl.IsEmpty());
 		m_comboHost.EnableWindow(TRUE);
 		m_checkIPv6.EnableWindow(TRUE);
 		m_buttonOptions.EnableWindow(TRUE);
 		m_comboHost.SetFocus();
+		if (m_isAutoReportEnabled)
+		{
+			PostMessage(WM_COMMAND, MAKEWPARAM(ID_SEND_REPORT, BN_CLICKED), 0);
+		}
 		break;
 	case STOPPING_TO_STOPPING:
 		DisplayRedraw();
@@ -1205,18 +1236,34 @@ void WinMTRDialog::Transit(STATES new_state)
 
 void WinMTRDialog::OnTimer(UINT_PTR nIDEvent)
 {
-	static unsigned int call_count=0;
-	if(state == EXIT && WaitForSingleObject(traceThreadMutex, 0) == WAIT_OBJECT_0) {
-		ReleaseMutex(traceThreadMutex);
-		OnOK();
+	if (nIDEvent == TIMERID_DIALOG)
+	{
+		static unsigned int call_count = 0;
+		if (state == EXIT && WaitForSingleObject(traceThreadMutex, 0) == WAIT_OBJECT_0) {
+			ReleaseMutex(traceThreadMutex);
+			OnOK();
+		}
+
+		if (WaitForSingleObject(traceThreadMutex, 0) == WAIT_OBJECT_0) {
+			ReleaseMutex(traceThreadMutex);
+			Transit(IDLE);
+		}
+		else if ((++call_count & 5) == 5) {
+			if (state == TRACING) Transit(TRACING);
+			else if (state == STOPPING) Transit(STOPPING);
+		}
 	}
-	
-	if(WaitForSingleObject(traceThreadMutex, 0) == WAIT_OBJECT_0) {
-		ReleaseMutex(traceThreadMutex);
-		Transit(IDLE);
-	} else if((++call_count&5)==5) {
-		if(state==TRACING) Transit(TRACING);
-		else if(state==STOPPING) Transit(STOPPING);
+	else if (nIDEvent == TIMERID_AUTO_REPORT)
+	{
+		KillTimer(TIMERID_AUTO_REPORT);
+
+		if (m_isAutoReportEnabled)
+		{
+			if (state == TRACING)
+			{
+				Transit(STOPPING);
+			}
+		}
 	}
 	
 	CDialog::OnTimer(nIDEvent);
