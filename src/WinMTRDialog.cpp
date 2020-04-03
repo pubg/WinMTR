@@ -205,9 +205,7 @@ BOOL WinMTRDialog::OnInitDialog()
 	// And position the control bars
 	RepositionBars(AFX_IDW_CONTROLBAR_FIRST, AFX_IDW_CONTROLBAR_LAST, 0);
 	
-#ifdef USE_PARAM_FROM_REGISTRY
 	InitRegistry();
-#endif
 	InitFromIni();
 	
 	m_buttonSendReport.EnableWindow(!reportUrl.IsEmpty());
@@ -305,7 +303,11 @@ BOOL WinMTRDialog::InitRegistry()
 			}
 		}
 	}
+#endif
+
 	m_comboHost.AddString(CString((LPCSTR)IDS_STRING_CLEAR_HISTORY));
+
+#ifdef USE_PARAM_FROM_REGISTRY
 	RegCloseKey(hKey_v);
 	RegCloseKey(hKey);
 #endif
