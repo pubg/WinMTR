@@ -336,6 +336,14 @@ int WinMTRNet::GetAvg(int at)
 	return ret;
 }
 
+float WinMTRNet::GetAvgFloat(int at)
+{
+	WaitForSingleObject(ghMutex, INFINITE);
+	float ret = host[at].returned == 0 ? 0.0f : float(host[at].total) / float(host[at].returned);
+	ReleaseMutex(ghMutex);
+	return ret;
+}
+
 int WinMTRNet::GetPercent(int at)
 {
 	WaitForSingleObject(ghMutex, INFINITE);

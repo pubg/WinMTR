@@ -11,7 +11,9 @@
 #include "WinMTRNet.h"
 #include <iostream>
 #include <sstream>
-
+#include <string>
+#include <vector>
+#include <map>
 
 const UINT TIMERID_DIALOG = 1;
 const UINT TIMERID_AUTO_REPORT = 2;
@@ -122,6 +124,77 @@ void WinMTRDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, ID_EXPT, m_buttonExpT);
 }
 
+
+static std::vector<std::string> ParseCommandLine()
+{
+	const char * const commandLine = GetCommandLineA();
+	std::vector<std::string> result;
+
+	const char QUOTES = '"';
+	const char BACKSLASH = '\\';
+
+	const char * curPtr = commandLine;
+
+	while (*curPtr)
+	{
+		// skip white spaces
+		while (isspace(*curPtr))
+		{
+			++curPtr;
+		}
+
+		// all are white spaces
+		if (*curPtr == 0)
+		{
+			break;
+		}
+
+		std::string curToken;
+		bool isReadingQuoted = false;
+		for (; *curPtr; ++curPtr)
+		{
+			if (*curPtr == BACKSLASH && *(curPtr + 1) == QUOTES)
+			{
+				// \" means single " character whenever
+				curToken += QUOTES;
+				curPtr++;
+			}
+			else
+			{
+				if (isReadingQuoted)
+				{
+					if (*curPtr == QUOTES)
+					{
+						isReadingQuoted = false;
+					}
+					else
+					{
+						curToken += *curPtr;
+					}
+				}
+				else
+				{
+					if (*curPtr == QUOTES)
+					{
+						isReadingQuoted = true;
+					}
+					else if (isspace(*curPtr))
+					{
+						break;
+					}
+					else
+					{
+						curToken += *curPtr;
+					}
+				}
+			}
+		}
+
+		result.push_back(curToken);
+	}
+
+	return result;
+}
 
 //*****************************************************************************
 // WinMTRDialog::OnInitDialog
@@ -920,10 +993,128 @@ void WinMTRDialog::OnEXPH()
 	
 }
 
+// make Json string literal
+static CString JsonStringfy(CString str)
+{
+	CString result;
+	result += '"';
+
+	for (int i = 0; i < str.GetLength(); ++i)
+	{
+		char cur = str[i];
+
+		if (cur <= 8 || cur > 127)
+		{
+			// convert not-convertable character to '.'
+			result += ".";
+		}
+		else
+		{
+			switch (cur)
+			{
+			case '"':
+			case '\\':
+				result += '\\';
+				result += cur;
+				break;
+			case '\t':
+				result += "\\t";
+				break;
+			case '\f':
+				result += "\\f";
+				break;
+			case '\n':
+				result += "\\n";
+				break;
+			case '\r':
+				result += "\\r";
+				break;
+			default:
+				result += cur;
+				break;
+			}
+		}
+	}
+
+	result += '"';
+	return result;
+}
+
 
 void WinMTRDialog::OnSendReport()
 {
 	MessageBox("Send report", "TBD");
+
+	if (reportUrl.IsEmpty())
+	{
+		return;
+	}
+
+	CString innerArray;
+	{
+		innerArray += "[";
+
+		int nh = wmtrnet->GetMax();
+		for (int i = 0; i < nh; i++)
+		{
+			char name[1024];
+			wmtrnet->GetName(i, name);
+			if (strcmp(name, "") == 0)
+				strcpy(name, "UNKNOWN");
+
+			if (i != 0)
+			{
+				innerArray += ",";
+			}
+
+			innerArray.AppendFormat("{\"host\":%s, \"miss_percent\":%d, \"cnt_send\":%d, \"cnt_recv\":%d, \"ping_best\":%d, \"ping_avg\":%1.1f, \"ping_worst\":%d, \"ping_last\":%d}",
+				(const char *)JsonStringfy(name),
+				wmtrnet->GetPercent(i),
+				wmtrnet->GetXmit(i), wmtrnet->GetReturned(i), wmtrnet->GetBest(i),
+				wmtrnet->GetAvgFloat(i), wmtrnet->GetWorst(i), wmtrnet->GetLast(i)
+			);
+
+		}
+		innerArray += "]";
+	}
+
+	std::map<std::string, std::string> metaMap;
+	{
+		std::vector<std::string> cmdVector = ParseCommandLine();
+		for (size_t i = 0; i < cmdVector.size(); ++i)
+		{
+			std::string cur = cmdVector[i];
+
+			// make cur as lower case.
+			for (auto curIt = cur.begin(); curIt != cur.end(); ++curIt)
+			{
+				if (*curIt >= 'A' && *curIt <= 'Z')
+				{
+					*curIt = *curIt - ('Z' - 'z');
+				}
+			}
+
+			if (cur.find_first_of("-meta_") == 0 || cur.find_first_of("/meta_") == 0)  // option that start with 'meta_'
+			{
+				if (i + 1 < cmdVector.size())
+				{
+					metaMap[cur.substr(1)] = cmdVector[i + 1];
+					++i;
+				}
+			}
+		}
+	}
+
+	CString json;
+
+	json += "{\n";
+	json.AppendFormat("\"report\": %s\n", innerArray);
+	for (auto it = metaMap.begin(); it != metaMap.end(); ++it)
+	{
+		json.Append(",");
+		json.AppendFormat("%s: %s\n", JsonStringfy(it->first.c_str()), JsonStringfy(it->second.c_str()));
+	}
+	json += "}";
 
 	if (m_isAutoReportEnabled)
 	{

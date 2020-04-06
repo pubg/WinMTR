@@ -70,6 +70,8 @@ public:
 	int		GetBest(int at);
 	int		GetWorst(int at);
 	int		GetAvg(int at);
+	float	GetAvgFloat(int at);
+	// miss percent
 	int		GetPercent(int at);
 	int		GetLast(int at);
 	int		GetReturned(int at);
