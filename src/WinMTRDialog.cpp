@@ -1108,7 +1108,8 @@ void WinMTRDialog::OnSendReport()
 	CString json;
 
 	json += "{\n";
-	json.AppendFormat("\"report\": %s\n", innerArray);
+	json.AppendFormat("\"version\": %d\n", 1);
+	json.AppendFormat(",\"report\": %s\n", innerArray);
 	for (auto it = metaMap.begin(); it != metaMap.end(); ++it)
 	{
 		json.Append(",");
