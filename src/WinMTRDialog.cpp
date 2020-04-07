@@ -210,9 +210,9 @@ BOOL WinMTRDialog::OnInitDialog()
 	}
 	
 #ifndef  _WIN64
-	char caption[] = {"WinMTR (PUBG) v1.00 32bit"};
+	char caption[] = {"WinMTR (PUBG) v" WINMTR_VERSION " 32bit"};
 #else
-	char caption[] = {"WinMTR (PUBG) v1.00 64bit"};
+	char caption[] = {"WinMTR (PUBG) v" WINMTR_VERSION " 64bit"};
 #endif
 	
 	SetTimer(TIMERID_DIALOG, WINMTR_DIALOG_TIMER, NULL);
@@ -1043,7 +1043,7 @@ static CString JsonStringfy(CString str)
 
 void WinMTRDialog::OnSendReport()
 {
-	MessageBox("Send report", "TBD");
+	//MessageBox("Send report", "TBD");
 
 	if (reportUrl.IsEmpty())
 	{
