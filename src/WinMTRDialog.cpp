@@ -1179,7 +1179,10 @@ void WinMTRDialog::OnSendReport()
 	json += "}";
 
 	
-	PostStringToURL(reportUrl, json);
+	if (!PostStringToURL(reportUrl, json))
+	{
+		MessageBox("Failed to send report to http server", "Error", MB_OK | MB_ICONWARNING);
+	}
 
 	if (m_isAutoReportEnabled)
 	{
