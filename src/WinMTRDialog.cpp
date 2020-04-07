@@ -9,6 +9,7 @@
 #include "WinMTROptions.h"
 #include "WinMTRProperties.h"
 #include "WinMTRNet.h"
+#include <afxinet.h>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -1041,6 +1042,66 @@ static CString JsonStringfy(CString str)
 }
 
 
+static bool PostStringToURL(const CString& URL, const CString & data)
+{
+	CString serverName, objectPath;
+	INTERNET_PORT internetPort;
+	DWORD dwServiceType = 0;
+	DWORD baseFlags = 0;
+
+	AfxParseURL(URL, dwServiceType, serverName, objectPath, internetPort);
+
+	if (dwServiceType == AFX_INET_SERVICE_HTTPS)
+	{
+		baseFlags = INTERNET_FLAG_SECURE;
+	}
+
+	DWORD resultStatus = 0;
+
+	CInternetSession * session = nullptr;
+	CHttpConnection * httpConnection = nullptr;
+	CHttpFile * httpFile = nullptr;
+	try
+	{
+		// http연결요청
+		session = new CInternetSession;
+		httpConnection = session->GetHttpConnection(serverName, (DWORD)baseFlags, internetPort);
+
+		DWORD dwFlags = baseFlags | INTERNET_FLAG_IGNORE_CERT_CN_INVALID | INTERNET_FLAG_IGNORE_CERT_DATE_INVALID;
+		httpFile = httpConnection->OpenRequest(CHttpConnection::HTTP_VERB_POST, objectPath, nullptr, 1, nullptr, nullptr, dwFlags);
+		httpFile->AddRequestHeaders("Content-Type: application/json");
+
+		// 데이터 전송
+		httpFile->SendRequest(nullptr, 0, (LPVOID)data.GetString(), data.GetLength());
+		httpFile->QueryInfoStatusCode(resultStatus);
+	}
+	catch (CInternetException * ex)
+	{
+		CString msg;
+		msg.Format("ErrorCode:%d  ", ex->m_dwError);
+	}
+
+	if (httpFile)
+	{
+		delete httpFile;
+		httpFile = nullptr;
+	}
+	if (httpConnection)
+	{
+		httpConnection->Close();
+		delete httpConnection;
+		httpConnection = nullptr;
+	}
+	if (session)
+	{
+		session->Close();
+		delete session;
+		session = nullptr;
+	}
+
+	return (resultStatus / 100) * 100 == 200;
+}
+
 void WinMTRDialog::OnSendReport()
 {
 	//MessageBox("Send report", "TBD");
@@ -1116,6 +1177,9 @@ void WinMTRDialog::OnSendReport()
 		json.AppendFormat("%s: %s\n", JsonStringfy(it->first.c_str()), JsonStringfy(it->second.c_str()));
 	}
 	json += "}";
+
+	
+	PostStringToURL(reportUrl, json);
 
 	if (m_isAutoReportEnabled)
 	{
